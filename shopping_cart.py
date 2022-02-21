@@ -40,3 +40,13 @@ def to_usd(my_price):
 # TODO: write some Python code here to produce the desired output
 
 print(products)
+
+
+# ask for user input
+
+
+
+# look up coresponding products
+
+product_id = input("Please input a product identifier:")
+print(product_id)
