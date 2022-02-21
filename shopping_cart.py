@@ -1,4 +1,5 @@
 # shopping_cart.py
+from datetime import datetime
 
 products = [
     {"id":1, "name": "Chocolate Sandwich Cookies", "department": "snacks", "aisle": "cookies cakes", "price": 3.50},
@@ -40,31 +41,47 @@ def to_usd(my_price):
 # TODO: write some Python code here to produce the desired output
 
 #print(products)
-total_price = 0
+subtotal_price = 0
 product_ids=[]
 while True:
 
 # ask for user input
     product_id = input("Please input a product identifier, or 'DONE' if there are no more items:")
-    
     if product_id == "DONE":
         break
+    if int(product_id) not in list(map(lambda x: x["id"], products)):
+        #print(list(map(lambda x: x["id"], products)))
+        print("You entered an invalid identifier. Please try again.")
+        quit()
+    
     
     product_ids.append(product_id)
 
 # look up coresponding products
-    
-    
-for product_id in product_ids:
-        matching_products = []
-        for x in products:
-            if str(x["id"])==str(product_id):
-                matching_products.append(x)
-    
-        matching_product = matching_products[0]
-        total_price = total_price+matching_product["price"]
-    
-#print(product_ids)
-        print(matching_product["name"],matching_product["price"])
 
-print("Total price: "+ str(to_usd(total_price)))
+matching_products = []
+for product_id in product_ids:
+    for x in products:
+        if str(x["id"])==str(product_id):
+            matching_products.append(x)
+            subtotal_price += x["price"]
+            break
+        
+print("-----------------------------------")
+print("Welcome to the Planet Grocery Store!")
+print("www.planetgrocerystore.com")
+print("-----------------------------------")
+print("Check out at: " + datetime.now().strftime('%Y-%m-%d %H:%M:%S %p'))
+print("-----------------------------------")
+print("Selected products:")
+for matching_product in matching_products:
+    print("... "+ matching_product["name"]+" (" + str(to_usd(matching_product["price"]))+")")
+print("-----------------------------------")
+print("Subtotal: "+ str(to_usd(subtotal_price)))
+tax = round(int(subtotal_price) * 0.0875, 2)
+print("Tax: "+ str(to_usd(tax)))
+total = round(tax + subtotal_price, 2)
+print("Total price: "+ str(to_usd(total)))
+print("-----------------------------------")
+print("Thank you! See you again soon!")
+print("-----------------------------------")
