@@ -40,11 +40,11 @@ def to_usd(my_price):
 # TODO: write some Python code here to produce the desired output
 
 #print(products)
-
+total_price = 0
 while True:
 
 # ask for user input
-    product_id = input("Please input a product identifier:")
+    product_id = input("Please input a product identifier, or 'DONE' if there are no more items:")
     print(product_id)
     if product_id == "DONE":
         break
@@ -56,9 +56,9 @@ while True:
     for x in products:
         if str(x["id"])==str(product_id):
             matching_products.append(x)
-    matching_product=matching_products[0]
+    
+    matching_product = matching_products[0]
+    total_price = total_price+matching_product["price"]
     print(matching_product["name"],matching_product["price"])
 
-
-
-
+print("Total price: "+ str(to_usd(total_price)))
