@@ -1,5 +1,11 @@
 # shopping_cart.py
 from datetime import datetime
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+TAX_RATE = float(os.getenv("TAX_RATE"))
 
 products = [
     {"id":1, "name": "Chocolate Sandwich Cookies", "department": "snacks", "aisle": "cookies cakes", "price": 3.50},
@@ -49,11 +55,11 @@ while True:
     product_id = input("Please input a product identifier, or 'DONE' if there are no more items:")
     if product_id == "DONE":
         break
-    if int(product_id) not in list(map(lambda x: x["id"], products)):
+    if not product_id.isnumeric() or int(product_id) not in list(map(lambda x: x["id"], products)):
         #print(list(map(lambda x: x["id"], products)))
         print("You entered an invalid identifier. Please try again.")
-        quit()
-    
+       
+
     
     product_ids.append(product_id)
 
@@ -78,7 +84,7 @@ for matching_product in matching_products:
     print("... "+ matching_product["name"]+" (" + str(to_usd(matching_product["price"]))+")")
 print("-----------------------------------")
 print("Subtotal: "+ str(to_usd(subtotal_price)))
-tax = round(int(subtotal_price) * 0.0875, 2)
+tax = round(float(subtotal_price) * TAX_RATE, 2)
 print("Tax: "+ str(to_usd(tax)))
 total = round(tax + subtotal_price, 2)
 print("Total price: "+ str(to_usd(total)))
