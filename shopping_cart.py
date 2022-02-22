@@ -2,6 +2,8 @@
 from datetime import datetime
 import os
 from dotenv import load_dotenv
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail
 
 load_dotenv()
 
@@ -91,3 +93,46 @@ print("Total price: "+ str(to_usd(total)))
 print("-----------------------------------")
 print("Thank you! See you again soon!")
 print("-----------------------------------")
+
+#send emails
+
+SENDGRID_API_KEY = os.getenv("SENDGRID_API_KEY", default="OOPS, please set env var called 'SENDGRID_API_KEY'")
+SENDER_ADDRESS = os.getenv("SENDER_ADDRESS", default="OOPS, please set env var called 'SENDER_ADDRESS'")
+
+client = SendGridAPIClient(SENDGRID_API_KEY) #> <class 'sendgrid.sendgrid.SendGridAPIClient>
+#print("CLIENT:", type(client))
+
+subject = "Your Receipt from the Planet Grocery Store"
+
+html_list_items = ""
+for p in matching_products:
+    html_list_items += f"<li>You ordered: {p['name']} -- {to_usd(p['price'])} </li>"
+
+html_content = f"""
+<h3>Hello this is your receipt</h3>
+<p>Date: {datetime.now().strftime('%Y-%m-%d %H:%M:%S %p')}</p>
+<ol>
+    {html_list_items}
+</ol>
+<p>Subtotal: {str(to_usd(subtotal_price))}</p>
+<p>Tax: {str(to_usd(tax))}
+<p>Total price: {str(to_usd(total))}</p>
+
+"""
+# print("HTML:", html_content)
+RECIPIENT_ADDRESS = input("If you would like to receive a receipt via email, please enter your email address here: ")
+# FYI: we'll need to use our verified SENDER_ADDRESS as the `from_email` param
+# ... but we can customize the `to_emails` param to send to other addresses
+message = Mail(from_email=SENDER_ADDRESS, to_emails=RECIPIENT_ADDRESS, subject=subject, html_content=html_content)
+
+try:
+    response = client.send(message)
+
+    # print("RESPONSE:", type(response)) #> <class 'python_http_client.client.Response'>
+    # print(response.status_code) #> 202 indicates SUCCESS
+    # print(response.body)
+    # print(response.headers)
+
+except Exception as err:
+    print(type(err))
+    print(err)
